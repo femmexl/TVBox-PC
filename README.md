@@ -7,6 +7,21 @@
 >
 > ---
 
+## 📺 电视源 / 影视源（使用说明）
+
+FreeBox 通过「数据源 / 接口地址」拉取影视内容，软件本身**不含任何资源**。下面仅说明**自用时的添加方式**，并预留你自己的源位置：
+
+1. 打开 FreeBox → 设置 → 数据源（也称「接口」/「订阅源」）；
+2. 粘贴一个**源地址**（接口或订阅链接），保存后刷新即可加载；
+3. 也可按应用提示导入本地源文件。
+
+> ⚠️ **合规与使用提醒**
+> - 请**仅使用你有权使用的来源**（如已获授权的正版内容、公开/公共领域资源，或自建源）。
+> - 本仓库为个人备份，**不内置、不分发任何第三方影视源**；请勿将未经授权的源公开传播，以免侵犯著作权。
+> - 查找源的官方渠道：参阅原项目 Wiki 与社区 → <https://github.com/kknifer7/FreeBox>
+> - 你自己的源（占位，请替换为**你有权使用**的地址）：
+>   `源地址：<在此填入你有权使用的源>`
+
 <p align="center">
     <img src="https://sourceforge.net/p/freeboxk/main/ci/main/tree/src/main/resources/io/knifer/freebox/image/logo.png?format=raw" title="" alt="LOGO" data-align="center">
 </p>
