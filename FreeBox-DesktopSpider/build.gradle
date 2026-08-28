@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.github.catvod'
+version = 'desktop-1.0.0'
+
+repositories {
+    mavenCentral()
+    // 国内加速镜像（可选）
+    maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public/' }
+}
+
+dependencies {
+    // 以下由 FreeBox 运行时（父类加载器）提供，仅编译期需要、不打包进 jar：
+    // FreeBox 自身使用 okhttp3 / gson / commons-lang3，运行时必然存在。
+    compileOnly 'com.squareup.okhttp3:okhttp:4.12.0'
+    compileOnly 'com.google.code.gson:gson:2.10.1'
+    compileOnly 'org.apache.commons:commons-lang3:3.14.0'
+
+    // 以下可能不在 FreeBox 运行时，打包进 jar 以保障可用性：
+    implementation 'org.json:json:20240303'
+    implementation 'org.jsoup:jsoup:1.17.2'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+jar {
+    archiveBaseName = 'custom_spider_desktop'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// 本工程产物：build/libs/custom_spider_desktop-<version>.jar
+// 该 jar 内含：com.github.catvod.* 爬虫代码 + android.util/log/text 兼容垫片，
+// 由 FreeBox 通过 desktop-index.json 的 spider 字段加载。
