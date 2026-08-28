@@ -1,3 +1,12 @@
+> ⚠️ **声明 / Disclaimer**
+>
+> 本仓库是 **他人开源项目的个人备份副本**，**仅供本人自用**，**并非本人作品，也未获得授权对外分发**。
+> 原始项目（作者 **kknifer7**）：**FreeBox** —— 源码地址：<https://github.com/kknifer7/FreeBox>
+> 原始协议：**GPL-3.0**。请尊重原作者版权，如需使用请前往原始项目。
+> 若原作者或权利方要求删除，将立即移除本备份。
+>
+> ---
+
 <p align="center">
     <img src="https://sourceforge.net/p/freeboxk/main/ci/main/tree/src/main/resources/io/knifer/freebox/image/logo.png?format=raw" title="" alt="LOGO" data-align="center">
 </p>
