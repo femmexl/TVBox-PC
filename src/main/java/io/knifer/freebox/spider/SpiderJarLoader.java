@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -56,6 +57,9 @@ public class SpiderJarLoader {
     private String recent = null;
     @Setter
     private FreeBoxApiConfig apiConfig = null;
+
+    // 已提示过“非法/安卓蜘蛛jar”的 jar 路径集合，避免每个站点重复弹窗
+    private final Set<String> warnedInvalidJars = ConcurrentHashMap.newKeySet();
 
     // 使用Provider注入，避免循环依赖
     private final Provider<Context> contextProvider;
@@ -199,11 +203,24 @@ public class SpiderJarLoader {
         }
         if (!isJarAvailable(jar)) {
             log.info("invalid jar: {}", jar);
-            Platform.runLater(() -> ToastHelper.showErrorAlert(
-                    I18nKeys.ERROR,
-                    I18nKeys.TV_ERROR_INVALID_SPIDER_JAR,
-                    null
-            ));
+            String jarKey = jar.toString();
+            // 同一 jar 只在首次提示，避免逐个站点重复弹窗刷屏
+            if (warnedInvalidJars.add(jarKey)) {
+                if (isAndroidSpiderJar(jar)) {
+                    // 安卓(Android)专用蜘蛛 jar（含 classes.dex），桌面 JVM 无法加载
+                    Platform.runLater(() -> ToastHelper.showErrorAlert(
+                            I18nKeys.ERROR,
+                            I18nKeys.TV_ERROR_ANDROID_SPIDER_UNSUPPORTED,
+                            null
+                    ));
+                } else {
+                    Platform.runLater(() -> ToastHelper.showErrorAlert(
+                            I18nKeys.ERROR,
+                            I18nKeys.TV_ERROR_INVALID_SPIDER_JAR,
+                            null
+                    ));
+                }
+            }
 
             return false;
         }
@@ -243,6 +260,28 @@ public class SpiderJarLoader {
         }
 
         return true;
+    }
+
+    /**
+     * 判断 jar 是否为安卓(Android)专用蜘蛛包：内部包含 classes.dex / .dex 字节码。
+     * 这类包无法在桌面 JVM 上加载（dex 不是 Java 字节码，且依赖 android.* 类库）。
+     */
+    private boolean isAndroidSpiderJar(Path jarPath) {
+        try (JarFile jarFile = new JarFile(jarPath.toFile())) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                String name = entries.nextElement().getName();
+                if (name.endsWith(".dex") || name.contains("classes.dex")) {
+                    log.warn("android spider jar detected: {}", name);
+
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            log.error("check android spider jar error", e);
+        }
+
+        return false;
     }
 
     private void putProxy(String key) {
